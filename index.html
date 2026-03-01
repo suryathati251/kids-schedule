@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KidsSchedule">
+<meta name="theme-color" content="#4F46E5">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="KidsSchedule">
+<title>Kids Schedule Pro ⭐</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   CSS VARIABLES & RESET
+═══════════════════════════════════════ */
+:root {
+  --indigo: #4F46E5;
+  --indigo-l: #EEF2FF;
+  --coral: #F97316;
+  --coral-l: #FFF7ED;
+  --mint: #10B981;
+  --mint-l: #ECFDF5;
+  --rose: #F43F5E;
+  --rose-l: #FFF1F2;
+  --amber: #F59E0B;
+  --amber-l: #FFFBEB;
+  --sky: #0EA5E9;
+  --sky-l: #F0F9FF;
+  --violet: #8B5CF6;
+  --violet-l: #F5F3FF;
+
+  --bg: #F8F7FF;
+  --surface: #FFFFFF;
+  --border: #E8E6F0;
+  --text: #1C1B2E;
+  --text-2: #6B6880;
+  --shadow-sm: 0 2px 8px rgba(79,70,229,0.08);
+  --shadow: 0 4px 20px rgba(79,70,229,0.12);
+  --shadow-lg: 0 12px 40px rgba(79,70,229,0.18);
+  --r: 16px;
+  --r-sm: 10px;
+  --r-lg: 24px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
+  overflow-x: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ═══════════════════════════════════════
+   BACKGROUND DECORATION
+═══════════════════════════════════════ */
+.bg-deco {
+  position: fixed; inset: 0; z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bg-deco::before {
+  content: '';
+  position: absolute;
+  top: -20%; left: -10%;
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, #C7D2FE 0%, transparent 65%);
+  opacity: 0.5;
+}
+.bg-deco::after {
+  content: '';
+  position: absolute;
+  bottom: -15%; right: -10%;
+  width: 50vw; height: 50vw;
+  background: radial-gradient(circle, #FDE68A 0%, transparent 65%);
+  opacity: 0.4;
+}
+.bg-blob {
+  position: absolute;
+  top: 40%; left: 60%;
+  width: 35vw; height: 35vw;
+  background: radial-gradient(circle, #D1FAE5 0%, transparent 65%);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(90px);
+  background: var(--text);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  z-index: 9999;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  max-width: 90vw;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════
+   HEADER
+═══════════════════════════════════════ */
+.app-header {
+  padding: calc(env(safe-area-inset-top) + 18px) 18px 0;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.logo-area { flex: 1; }
+
+.logo-area h1 {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  font-weight: 800;
+  color: var(--indigo);
+  line-height: 1;
+}
+.logo-area h1 em { color: var(--coral); font-style: normal; }
+.logo-area p {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+
+.header-actions { display: flex; gap: 8px; }
+
+.icon-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+.icon-btn:hover { transform: scale(1.08); box-shadow: var(--shadow); }
+.icon-btn .pip {
+  position: absolute;
+  top: 1px; right: 1px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--rose);
+  border: 2px solid var(--bg);
+  display: none;
+}
+.icon-btn .pip.on { display: block; }
+
+/* ═══════════════════════════════════════
+   KID TABS
+═══════════════════════════════════════ */
+.kid-scroller {
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -18px;
+  padding: 0 18px 12px;
+}
+.kid-scroller::-webkit-scrollbar { display: none; }
+.kid-tabs { display: flex; gap: 8px; width: max-content; }
+
+.k-tab {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 16px;
+  border-radius: 50px;
+  border: 2px solid transparent;
+  background: var(--surface);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  color: var(--text-2);
+}
+.k-tab .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.k-tab.active { color: white; box-shadow: var(--shadow); }
+.k-tab:hover { transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════
+   WEEK NAV
+═══════════════════════════════════════ */
+.week-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 18px 14px;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+.week-label {
+  flex: 1;
+  text-align: center;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.nav-arrow {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-arrow:hover { transform: scale(1.1); box-shadow: var(--shadow); }
+.today-chip {
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: none;
+  background: var(--indigo);
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.today-chip:hover { opacity: 0.88; }
+
+/* ═══════════════════════════════════════
+   UPCOMING STRIP
+═══════════════════════════════════════ */
+.upcoming-strip {
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 18px 14px;
+  margin: 0 -18px;
+  max-width: calc(1140px + 36px);
+  margin-left: auto; margin-right: auto;
+  padding-left: 18px; padding-right: 18px;
+}
+.upcoming-strip::-webkit-scrollbar { display: none; }
+.upcoming-inner { display: flex; gap: 8px; width: max-content; }
+
+.up-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface);
+  border-radius: 50px;
+  padding: 7px 14px;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+}
+.up-pill:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.up-pill .up-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.up-pill .up-when { color: var(--text-2); font-size: 0.72rem; }
+.up-pill.soon { background: #FFF7ED; border-left-color: var(--coral); }
+
+.up-header {
+  background: var(--indigo-l);
+  border-radius: 50px;
+  padding: 7px 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--indigo);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════
+   BOTTOM ACTION BAR
+═══════════════════════════════════════ */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  z-index: 100;
+  box-shadow: 0 -4px 24px rgba(79,70,229,0.08);
+}
+
+.bar-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  border: none;
+  background: transparent;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.18s;
+  flex: 1;
+  max-width: 80px;
+}
+.bar-btn .bar-icon { font-size: 1.3rem; line-height: 1; }
+.bar-btn:hover, .bar-btn.active { color: var(--indigo); background: var(--indigo-l); }
+.bar-btn.add-main {
+  background: var(--indigo);
+  color: white;
+  border-radius: var(--r-sm);
+  flex: 1.4;
+  max-width: 100px;
+}
+.bar-btn.add-main:hover { background: #4338CA; }
+
+/* ═══════════════════════════════════════
+   MAIN GRID
+═══════════════════════════════════════ */
+.grid-wrap {
+  padding: 0 12px 100px;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 960px) { .week-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 600px) { .week-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 340px) { .week-grid { grid-template-columns: 1fr; } }
+
+.day-col {
+  background: var(--surface);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+  transition: box-shadow 0.2s;
+  animation: colIn 0.3s ease both;
+}
+.day-col:hover { box-shadow: var(--shadow); }
+.day-col.is-today {
+  box-shadow: 0 0 0 2.5px var(--indigo), var(--shadow);
+}
+
+@keyframes colIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.day-head {
+  padding: 10px 8px 8px;
+  text-align: center;
+  position: relative;
+}
+.day-abbr {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+.day-num {
+  font-size: 0.68rem;
+  font-weight: 700;
+  opacity: 0.65;
+  margin-top: 1px;
+}
+.today-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--rose);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+
+.day-body {
+  flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 5px;
+}
+
+.act-card {
+  border-radius: 9px;
+  padding: 7px 26px 7px 9px;
+  font-size: 0.77rem;
+  font-weight: 700;
+  position: relative;
+  cursor: default;
+  transition: transform 0.15s;
+  line-height: 1.4;
+}
+.act-card:hover { transform: scale(1.02); }
+.act-name { display: block; font-size: 0.8rem; }
+.act-meta {
+  display: flex; align-items: center; gap: 4px;
+  margin-top: 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  opacity: 0.72;
+}
+.meta-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.del-btn {
+  position: absolute; top: 5px; right: 5px;
+  background: none; border: none;
+  font-size: 0.68rem;
+  cursor: pointer; opacity: 0;
+  transition: opacity 0.15s;
+  color: inherit; padding: 2px;
+  line-height: 1;
+}
+.act-card:hover .del-btn { opacity: 0.65; }
+
+.slot-add {
+  width: 100%; padding: 6px;
+  border: 1.5px dashed #D8D5E8;
+  border-radius: 9px;
+  background: none;
+  color: #C4C0D8;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Quicksand', sans-serif;
+  margin-top: 2px;
+}
+.slot-add:hover { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-l); }
+
+.empty-day { text-align: center; color: #D0CCEC; font-size: 0.7rem; font-weight: 700; padding: 6px 0; }
+
+/* ═══════════════════════════════════════
+   MODALS
+═══════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(28,27,46,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 600;
+  animation: oIn 0.18s;
+}
+@media (min-width: 600px) { .overlay { align-items: center; } }
+@keyframes oIn { from { opacity: 0; } to { opacity: 1; } }
+
+.sheet {
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 0 22px calc(28px + env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 480px;
+  max-height: 92vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: sheetUp 0.28s cubic-bezier(0.32,1.2,0.64,1);
+  box-shadow: 0 -12px 60px rgba(28,27,46,0.18);
+}
+@media (min-width: 600px) {
+  .sheet {
+    border-radius: 28px;
+    animation: scIn 0.28s cubic-bezier(0.32,1.2,0.64,1);
+    max-height: 88vh;
+  }
+}
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes scIn { from { opacity: 0; transform: scale(0.92) translateY(16px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: #E0DCF0;
+  border-radius: 2px;
+  margin: 14px auto 18px;
+}
+@media (min-width: 600px) { .sheet-handle { display: none; } }
+
+.sheet h2 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--indigo);
+  margin-bottom: 18px;
+}
+
+.fg { margin-bottom: 13px; }
+.fg label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 5px;
+}
+.fg input, .fg select, .fg textarea {
+  width: 100%;
+  padding: 10px 13px;
+  border: 2px solid var(--border);
+  border-radius: var(--r-sm);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  background: #FAFAFE;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  background: white;
+}
+.fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.sheet-actions { display: flex; gap: 10px; margin-top: 18px; }
+.sheet-actions .sb { flex: 1; }
+
+.sb {
+  padding: 12px 18px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.sb:hover { transform: translateY(-2px); }
+.sb-primary { background: var(--indigo); color: white; box-shadow: 0 4px 14px rgba(79,70,229,0.3); }
+.sb-primary:hover { background: #4338CA; }
+.sb-ghost { background: var(--indigo-l); color: var(--indigo); }
+.sb-ghost:hover { background: #E0E7FF; }
+.sb-danger { background: #FFE4E6; color: var(--rose); }
+.sb-danger:hover { background: #FDD; }
+
+/* Kid items in manage modal */
+.kid-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.kid-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  background: #FAFAFE;
+  border: 2px solid var(--border);
+  font-weight: 700;
+}
+.kid-swatch { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
+.kid-item-name { flex: 1; }
+.kid-count { font-size: 0.72rem; color: var(--text-2); }
+.kid-del { margin-left: auto; background: #FFE4E6; border: none; color: var(--rose); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: 800; font-size: 0.8rem; transition: all 0.15s; }
+.kid-del:hover { background: #FDD; transform: scale(1.1); }
+
+.color-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.c-opt { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.15s; outline: 3px solid transparent; outline-offset: 2px; }
+.c-opt:hover { transform: scale(1.2); }
+.c-opt.picked { outline-color: var(--text); }
+
+/* ═══════════════════════════════════════
+   SHARE SHEET
+═══════════════════════════════════════ */
+.share-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.share-tile {
+  background: #FAFAFE;
+  border: 2px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Quicksand', sans-serif;
+}
+.share-tile:hover { border-color: var(--indigo); background: var(--indigo-l); transform: translateY(-2px); box-shadow: var(--shadow); }
+.share-tile .t-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+.share-tile .t-name { font-weight: 800; font-size: 0.85rem; display: block; color: var(--text); }
+.share-tile .t-desc { font-size: 0.7rem; color: var(--text-2); display: block; margin-top: 2px; font-weight: 600; }
+
+.info-box {
+  background: var(--indigo-l);
+  border: 2px solid #C7D2FE;
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #3730A3;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.info-box.warn { background: var(--amber-l); border-color: #FDE68A; color: #92400E; }
+.info-box.success { background: var(--mint-l); border-color: #A7F3D0; color: #065F46; }
+
+/* ═══════════════════════════════════════
+   NOTIFICATIONS SHEET
+═══════════════════════════════════════ */
+.notif-status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.notif-status-badge.on { background: var(--mint-l); color: var(--mint); border: 2px solid #A7F3D0; }
+.notif-status-badge.off { background: var(--rose-l); color: var(--rose); border: 2px solid #FECDD3; }
+
+.notif-schedule {
+  background: #FAFAFE;
+  border: 2px solid var(--border);
+  border-radius: var(--r-sm);
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+}
+.notif-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.notif-row:last-child { border-bottom: none; }
+.notif-row .nr-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.notif-row .nr-time { margin-left: auto; color: var(--text-2); font-size: 0.72rem; font-weight: 700; }
+
+/* ═══════════════════════════════════════
+   PRINT STYLES
+═══════════════════════════════════════ */
+@media print {
+  .bg-deco, .bottom-bar, .week-bar button,
+  .slot-add, .del-btn, .header-actions,
+  .upcoming-strip, .kid-scroller { display: none !important; }
+  body { background: white; }
+  .day-col { box-shadow: none; border: 1px solid #eee; break-inside: avoid; }
+  .week-grid { grid-template-columns: repeat(7, 1fr) !important; }
+  .app-header { padding-top: 12px; }
+  .grid-wrap { padding-bottom: 0; }
+}
+
+/* ═══════════════════════════════════════
+   SCROLLBAR STYLE
+═══════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D0CCEC; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="bg-deco"><div class="bg-blob"></div></div>
+<div id="toast"></div>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="app-header">
+  <div class="header-row">
+    <div class="logo-area">
+      <h1>Kids <em>Schedule</em> ⭐</h1>
+      <p id="headerSub">Loading your week...</p>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openNotifSheet()" title="Reminders">
+        🔔
+        <span class="pip" id="notifPip"></span>
+      </button>
+      <button class="icon-btn" onclick="openShareSheet()" title="Share & Export">📤</button>
+    </div>
+  </div>
+
+  <!-- Kid tabs -->
+  <div class="kid-scroller">
+    <div class="kid-tabs" id="kidTabs"></div>
+  </div>
+</div>
+
+<!-- ══════════ WEEK NAV ══════════ -->
+<div class="week-bar">
+  <button class="nav-arrow" onclick="shiftWeek(-1)">◀</button>
+  <div class="week-label" id="weekLabel">—</div>
+  <button class="today-chip" onclick="goToday()">Today</button>
+  <button class="nav-arrow" onclick="shiftWeek(1)">▶</button>
+</div>
+
+<!-- ══════════ UPCOMING STRIP ══════════ -->
+<div class="upcoming-strip">
+  <div class="upcoming-inner" id="upcomingInner"></div>
+</div>
+
+<!-- ══════════ GRID ══════════ -->
+<div class="grid-wrap">
+  <div class="week-grid" id="weekGrid"></div>
+</div>
+
+<!-- ══════════ BOTTOM BAR ══════════ -->
+<div class="bottom-bar">
+  <button class="bar-btn" onclick="openShareSheet()">
+    <span class="bar-icon">📅</span>iCal
+  </button>
+  <button class="bar-btn" onclick="emailSchedule()">
+    <span class="bar-icon">📧</span>Email
+  </button>
+  <button class="bar-btn add-main" onclick="openAddSheet()">
+    <span class="bar-icon">＋</span>Add
+  </button>
+  <button class="bar-btn" onclick="exportPDF()">
+    <span class="bar-icon">📄</span>PDF
+  </button>
+  <button class="bar-btn" onclick="openKidsSheet()">
+    <span class="bar-icon">👧</span>Kids
+  </button>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     ADD ACTIVITY SHEET
+══════════════════════════════════════ -->
+<div class="overlay" id="addOverlay" style="display:none" onclick="if(e.target===this)closeSheet('addOverlay')">
+  <div class="sheet" id="addSheet">
+    <div class="sheet-handle"></div>
+    <h2>🎯 New Activity</h2>
+
+    <div class="fg">
+      <label>Activity Name *</label>
+      <input id="aName" type="text" placeholder="e.g. Soccer Practice" autocomplete="off" />
+    </div>
+
+    <div class="fg-row">
+      <div class="fg">
+        <label>Day</label>
+        <select id="aDay">
+          <option value="0">Monday</option><option value="1">Tuesday</option>
+          <option value="2">Wednesday</option><option value="3">Thursday</option>
+          <option value="4">Friday</option><option value="5">Saturday</option>
+          <option value="6">Sunday</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Start Time</label>
+        <input id="aTime" type="time" value="15:00" />
+      </div>
+    </div>
+
+    <div class="fg-row">
+      <div class="fg">
+        <label>Kid</label>
+        <select id="aKid"></select>
+      </div>
+      <div class="fg">
+        <label>Duration</label>
+        <select id="aDur">
+          <option value="30">30 min</option>
+          <option value="45">45 min</option>
+          <option value="60" selected>1 hour</option>
+          <option value="90">1.5 hrs</option>
+          <option value="120">2 hours</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fg-row">
+      <div class="fg">
+        <label>Emoji Icon</label>
+        <input id="aEmoji" type="text" placeholder="⚽ 🎨 📚 🎵" maxlength="4" />
+      </div>
+      <div class="fg">
+        <label>Repeat</label>
+        <select id="aRepeat">
+          <option value="none">One-time</option>
+          <option value="weekly">Every week</option>
+          <option value="biweekly">Every 2 weeks</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Location (optional)</label>
+      <input id="aLocation" type="text" placeholder="e.g. City Sports Complex" />
+    </div>
+
+    <div class="fg">
+      <label>Notes (optional)</label>
+      <textarea id="aNotes" rows="2" placeholder="Bring shin guards, water bottle..."></textarea>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="sb sb-ghost" onclick="closeSheet('addOverlay')">Cancel</button>
+      <button class="sb sb-primary" onclick="saveActivity()">Save Activity ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     KIDS SHEET
+══════════════════════════════════════ -->
+<div class="overlay" id="kidsOverlay" style="display:none" onclick="if(event.target===this)closeKidsSheet()">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>👨‍👧‍👦 Manage Kids</h2>
+    <div class="kid-list" id="kidListEl"></div>
+    <div class="fg">
+      <label>Child's Name</label>
+      <input id="newKidName" type="text" placeholder="Enter name..." autocomplete="off" />
+    </div>
+    <div class="fg">
+      <label>Colour</label>
+      <div class="color-row" id="colorRow"></div>
+    </div>
+    <div class="sheet-actions">
+      <button class="sb sb-ghost" onclick="closeKidsSheet()">Done</button>
+      <button class="sb sb-primary" onclick="addKid()">Add Child ＋</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SHARE SHEET
+══════════════════════════════════════ -->
+<div class="overlay" id="shareOverlay" style="display:none" onclick="if(event.target===this)closeSheet('shareOverlay')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>📤 Share & Export</h2>
+
+    <div class="share-grid">
+      <div class="share-tile" onclick="exportIcal()">
+        <span class="t-icon">📅</span>
+        <span class="t-name">iCal Export</span>
+        <span class="t-desc">Google, Apple & Outlook Calendar</span>
+      </div>
+      <div class="share-tile" onclick="emailSchedule()">
+        <span class="t-icon">📧</span>
+        <span class="t-name">Email Schedule</span>
+        <span class="t-desc">Full weekly schedule via email</span>
+      </div>
+      <div class="share-tile" onclick="exportPDF()">
+        <span class="t-icon">📄</span>
+        <span class="t-name">Save as PDF</span>
+        <span class="t-desc">Print or save to phone</span>
+      </div>
+      <div class="share-tile" onclick="nativeShare()">
+        <span class="t-icon">🔗</span>
+        <span class="t-name">Share Link</span>
+        <span class="t-desc">Copy or share this page</span>
+      </div>
+    </div>
+
+    <div class="info-box">
+      📱 <strong>On your phone:</strong> Open this HTML file in Chrome or Safari → tap the share/menu button → <em>"Add to Home Screen"</em>. It becomes a home screen app with full reminder support!
+    </div>
+
+    <div class="sheet-actions">
+      <button class="sb sb-ghost" onclick="closeSheet('shareOverlay')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     NOTIFICATIONS SHEET
+══════════════════════════════════════ -->
+<div class="overlay" id="notifOverlay" style="display:none" onclick="if(event.target===this)closeSheet('notifOverlay')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>🔔 Reminders</h2>
+    <div id="notifBody"></div>
+    <div class="sheet-actions" id="notifActions"></div>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════
+const KID_COLORS = ['#4F46E5','#F97316','#10B981','#F43F5E','#F59E0B','#0EA5E9','#8B5CF6','#EF4444'];
+const KID_LIGHTS = ['#EEF2FF','#FFF7ED','#ECFDF5','#FFF1F2','#FFFBEB','#F0F9FF','#F5F3FF','#FEF2F2'];
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DC   = ['#4F46E5','#F97316','#10B981','#F43F5E','#F59E0B','#0EA5E9','#8B5CF6'];
+const DL   = ['#EEF2FF','#FFF7ED','#ECFDF5','#FFF1F2','#FFFBEB','#F0F9FF','#F5F3FF'];
+
+// ═══════════════════════════════════════
+// STATE (persisted)
+// ═══════════════════════════════════════
+function loadS() {
+  try { const r = localStorage.getItem('ksp_v1'); if (r) return JSON.parse(r); } catch(e) {}
+  return null;
+}
+function saveS() {
+  try { localStorage.setItem('ksp_v1', JSON.stringify(S)); } catch(e) {}
+}
+
+let S = loadS() || {
+  kids: [
+    { id:1, name:'Emma',  color:KID_COLORS[0], light:KID_LIGHTS[0] },
+    { id:2, name:'Liam',  color:KID_COLORS[1], light:KID_LIGHTS[1] }
+  ],
+  activities: [
+    { id:1, name:'Soccer Practice', day:0, time:'16:00', dur:60, kidId:1, emoji:'⚽', location:'City Park',         repeat:'weekly',   notes:'Bring shin guards' },
+    { id:2, name:'Piano Lesson',    day:2, time:'14:30', dur:45, kidId:2, emoji:'🎹', location:'Music Academy',    repeat:'weekly',   notes:'' },
+    { id:3, name:'Art Class',       day:4, time:'15:00', dur:60, kidId:1, emoji:'🎨', location:'Community Centre', repeat:'weekly',   notes:'' },
+    { id:4, name:'Swimming',        day:5, time:'10:00', dur:45, kidId:2, emoji:'🏊', location:'Aquatic Centre',   repeat:'weekly',   notes:'Bring towel & cap' },
+  ],
+  filterKid: null,
+  weekOffset: 0,
+  pickedColor: KID_COLORS[2],
+  nextId: 20,
+  notifOn: false
+};
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+function toast(msg, ms = 2600) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function fmtTime(t) {
+  if (!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  return `${h > 12 ? h-12 : h||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+}
+
+function getMonday(offset=0) {
+  const d = new Date();
+  d.setDate(d.getDate() - ((d.getDay()+6)%7) + offset*7);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function getWeekDates(offset) {
+  const mon = getMonday(offset);
+  return Array.from({length:7}, (_,i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate()+i);
+    return d;
+  });
+}
+
+function todayDi() { return (new Date().getDay()+6)%7; }
+
+function weekLabel(offset) {
+  const d = getWeekDates(offset);
+  const o = { month:'short', day:'numeric' };
+  return `${d[0].toLocaleDateString('en-US',o)} – ${d[6].toLocaleDateString('en-US',o)}`;
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function icsDate(d) {
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+}
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function renderAll() {
+  renderTabs();
+  renderGrid();
+  renderUpcoming();
+  $('weekLabel').textContent = weekLabel(S.weekOffset);
+  $('headerSub').textContent = S.weekOffset === 0 ? 'This week' : S.weekOffset > 0 ? `+${S.weekOffset} week${S.weekOffset>1?'s':''}` : `${Math.abs(S.weekOffset)} week${Math.abs(S.weekOffset)>1?'s':''} ago`;
+  updateNotifPip();
+  saveS();
+}
+
+function renderTabs() {
+  const el = $('kidTabs');
+  el.innerHTML = '';
+  el.appendChild(mkTab('🌟 All Kids', null, S.filterKid===null, '#1C1B2E'));
+  S.kids.forEach(k => el.appendChild(mkTab(k.name, k.id, S.filterKid===k.id, k.color)));
+}
+
+function mkTab(label, kidId, active, color) {
+  const btn = document.createElement('button');
+  btn.className = 'k-tab' + (active ? ' active' : '');
+  if (active) btn.style.cssText = `background:${color};border-color:${color};`;
+  else btn.style.cssText = `border-color:${color}40;color:${color};`;
+  const dotHtml = kidId ? `<span class="dot" style="background:${color};${active?'background:rgba(255,255,255,0.55)':''}"></span>` : '';
+  btn.innerHTML = dotHtml + label;
+  btn.onclick = () => { S.filterKid = kidId; renderAll(); };
+  return btn;
+}
+
+function renderGrid() {
+  const grid = $('weekGrid');
+  grid.innerHTML = '';
+  const todayI = S.weekOffset===0 ? todayDi() : -1;
+  const dates = getWeekDates(S.weekOffset);
+
+  DAYS.forEach((day, di) => {
+    const col = document.createElement('div');
+    col.className = 'day-col' + (di===todayI ? ' is-today' : '');
+    col.style.animationDelay = `${di*35}ms`;
+
+    // head
+    const head = document.createElement('div');
+    head.className = 'day-head';
+    head.style.cssText = `background:${DL[di]};`;
+    const dateStr = dates[di].toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    head.innerHTML = `
+      <div class="day-abbr" style="color:${DC[di]}">${day.substring(0,3).toUpperCase()}</div>
+      <div class="day-num" style="color:${DC[di]}">${dateStr}</div>
+      ${di===todayI ? '<div class="today-dot"></div>' : ''}
+    `;
+    col.appendChild(head);
+
+    // body
+    const body = document.createElement('div');
+    body.className = 'day-body';
+
+    const acts = S.activities
+      .filter(a => a.day===di && (S.filterKid===null || a.kidId===S.filterKid))
+      .sort((a,b) => a.time.localeCompare(b.time));
+
+    if (!acts.length) {
+      body.innerHTML = '<div class="empty-day">Free day 🌈</div>';
+    }
+
+    acts.forEach(act => {
+      const kid = S.kids.find(k => k.id===act.kidId);
+      const card = document.createElement('div');
+      card.className = 'act-card';
+      card.style.cssText = `background:${kid?kid.light:'#F5F5FA'};color:${kid?kid.color:'#666'};`;
+      card.innerHTML = `
+        <button class="del-btn" onclick="delAct(${act.id},event)" title="Remove">✕</button>
+        <span class="act-name">${act.emoji?act.emoji+' ':''}${act.name}</span>
+        <div class="act-meta">
+          ${kid?`<span class="meta-dot" style="background:${kid.color}"></span><span>${kid.name}</span><span>·</span>`:''}
+          <span>${fmtTime(act.time)}</span>
+          ${act.dur?`<span>· ${act.dur<60?act.dur+'m':act.dur/60+'h'}</span>`:''}
+          ${act.location?`<span>· 📍</span>`:''}
+          ${act.repeat==='weekly'?`<span>🔁</span>`:''}
+        </div>
+      `;
+      body.appendChild(card);
+    });
+
+    const add = document.createElement('button');
+    add.className = 'slot-add';
+    add.textContent = '＋';
+    add.onclick = () => openAddSheet(di);
+    body.appendChild(add);
+
+    col.appendChild(body);
+    grid.appendChild(col);
+  });
+}
+
+function renderUpcoming() {
+  const inner = $('upcomingInner');
+  inner.innerHTML = '';
+  const todayI = todayDi();
+  const now = new Date();
+
+  const soon = S.activities
+    .filter(a => {
+      const daysUntil = ((a.day - todayI) + 7) % 7;
+      if (daysUntil > 3) return false;
+      const d = new Date();
+      d.setDate(d.getDate() + daysUntil);
+      const [h,m] = a.time.split(':').map(Number);
+      d.setHours(h,m,0,0);
+      return d > now;
+    })
+    .sort((a,b) => {
+      const da = ((a.day-todayI)+7)%7, db = ((b.day-todayI)+7)%7;
+      return da !== db ? da-db : a.time.localeCompare(b.time);
+    })
+    .slice(0,8);
+
+  if (!soon.length) return;
+
+  const hdr = document.createElement('div');
+  hdr.className = 'up-header';
+  hdr.textContent = 'Coming up:';
+  inner.appendChild(hdr);
+
+  soon.forEach(act => {
+    const kid = S.kids.find(k => k.id===act.kidId);
+    const daysUntil = ((act.day-todayI)+7)%7;
+    const when = daysUntil===0 ? 'Today' : daysUntil===1 ? 'Tomorrow' : DAYS[act.day].substring(0,3);
+
+    // Check if within 2 hours
+    const d = new Date();
+    d.setDate(d.getDate()+daysUntil);
+    const [h,m] = act.time.split(':').map(Number);
+    d.setHours(h,m,0,0);
+    const isSoon = (d-now) < 2*60*60*1000;
+
+    const pill = document.createElement('div');
+    pill.className = 'up-pill' + (isSoon ? ' soon' : '');
+    if (kid) pill.style.borderLeftColor = kid.color;
+    pill.innerHTML = `
+      ${kid ? `<span class="up-dot" style="background:${kid.color}"></span>` : ''}
+      <span>${act.emoji?act.emoji+' ':''}${act.name}</span>
+      <span class="up-when">${when} ${fmtTime(act.time)}</span>
+    `;
+    inner.appendChild(pill);
+  });
+}
+
+// ═══════════════════════════════════════
+// WEEK NAV
+// ═══════════════════════════════════════
+function shiftWeek(d) { S.weekOffset += d; renderAll(); }
+function goToday() { S.weekOffset = 0; renderAll(); }
+
+// ═══════════════════════════════════════
+// ADD ACTIVITY
+// ═══════════════════════════════════════
+function openAddSheet(dayIdx) {
+  $('aName').value = '';
+  $('aEmoji').value = '';
+  $('aLocation').value = '';
+  $('aNotes').value = '';
+  $('aTime').value = '15:00';
+  $('aRepeat').value = 'none';
+  $('aDur').value = '60';
+  if (dayIdx !== undefined) $('aDay').value = dayIdx;
+
+  const sel = $('aKid');
+  sel.innerHTML = '';
+  S.kids.forEach(k => {
+    const o = document.createElement('option');
+    o.value = k.id; o.textContent = k.name;
+    if (S.filterKid === k.id) o.selected = true;
+    sel.appendChild(o);
+  });
+
+  $('addOverlay').style.display = 'flex';
+  setTimeout(() => $('aName').focus(), 200);
+}
+
+function saveActivity() {
+  const name = $('aName').value.trim();
+  if (!name) { $('aName').focus(); $('aName').style.borderColor = 'var(--rose)'; return; }
+  $('aName').style.borderColor = '';
+
+  S.activities.push({
+    id: S.nextId++,
+    name,
+    day: +$('aDay').value,
+    time: $('aTime').value,
+    dur: +$('aDur').value,
+    kidId: +$('aKid').value,
+    emoji: $('aEmoji').value.trim(),
+    location: $('aLocation').value.trim(),
+    repeat: $('aRepeat').value,
+    notes: $('aNotes').value.trim()
+  });
+
+  closeSheet('addOverlay');
+  renderAll();
+  scheduleNotifs();
+  toast('✅ Activity saved!');
+}
+
+function delAct(id, e) {
+  e.stopPropagation();
+  S.activities = S.activities.filter(a => a.id !== id);
+  renderAll();
+  scheduleNotifs();
+  toast('🗑️ Removed');
+}
+
+// ═══════════════════════════════════════
+// KIDS
+// ═══════════════════════════════════════
+function openKidsSheet() {
+  buildKidList(); buildColorRow();
+  $('kidsOverlay').style.display = 'flex';
+}
+function closeKidsSheet() { closeSheet('kidsOverlay'); renderAll(); }
+
+function buildKidList() {
+  const el = $('kidListEl');
+  el.innerHTML = '';
+  if (!S.kids.length) {
+    el.innerHTML = '<p style="text-align:center;color:var(--text-2);font-size:0.85rem;padding:8px">No kids yet — add one below!</p>';
+    return;
+  }
+  S.kids.forEach(k => {
+    const cnt = S.activities.filter(a => a.kidId===k.id).length;
+    const row = document.createElement('div');
+    row.className = 'kid-item';
+    row.innerHTML = `
+      <span class="kid-swatch" style="background:${k.color}"></span>
+      <span class="kid-item-name">${k.name}</span>
+      <span class="kid-count">${cnt} activit${cnt===1?'y':'ies'}</span>
+      <button class="kid-del" onclick="removeKid(${k.id})">✕</button>
+    `;
+    el.appendChild(row);
+  });
+}
+
+function buildColorRow() {
+  const el = $('colorRow');
+  el.innerHTML = '';
+  KID_COLORS.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'c-opt' + (c===S.pickedColor ? ' picked' : '');
+    d.style.background = c;
+    d.onclick = () => { S.pickedColor = c; buildColorRow(); };
+    el.appendChild(d);
+  });
+}
+
+function addKid() {
+  const name = $('newKidName').value.trim();
+  if (!name) { $('newKidName').focus(); return; }
+  const ci = KID_COLORS.indexOf(S.pickedColor);
+  S.kids.push({ id: S.nextId++, name, color: S.pickedColor, light: KID_LIGHTS[ci>=0?ci:0] });
+  $('newKidName').value = '';
+  S.pickedColor = KID_COLORS[(ci+1) % KID_COLORS.length];
+  buildKidList(); buildColorRow();
+  toast(`👋 ${name} added!`);
+}
+
+function removeKid(id) {
+  const k = S.kids.find(x => x.id===id);
+  if (!confirm(`Remove ${k?.name}? Their activities will also be removed.`)) return;
+  S.kids = S.kids.filter(x => x.id!==id);
+  S.activities = S.activities.filter(a => a.kidId!==id);
+  if (S.filterKid===id) S.filterKid = null;
+  buildKidList();
+  toast(`Removed ${k?.name}`);
+}
+
+// ═══════════════════════════════════════
+// SHEET HELPERS
+// ═══════════════════════════════════════
+function closeSheet(id) { $(id).style.display = 'none'; }
+
+// ═══════════════════════════════════════
+// NOTIFICATIONS (Browser Push)
+// ═══════════════════════════════════════
+let ntimers = [];
+
+function openNotifSheet() {
+  const body = $('notifBody');
+  const acts = $('notifActions');
+  const sup = 'Notification' in window;
+
+  if (!sup) {
+    body.innerHTML = `<div class="info-box warn">⚠️ Your browser doesn't support push notifications. Try Chrome or Safari on your phone.</div>`;
+    acts.innerHTML = `<button class="sb sb-ghost" onclick="closeSheet('notifOverlay')">Close</button>`;
+  } else if (Notification.permission === 'denied') {
+    body.innerHTML = `
+      <div class="info-box warn">🚫 <strong>Notifications blocked.</strong><br>Go to browser Settings → Site Settings → Notifications and allow this page.</div>
+      <div class="info-box">📧 <strong>Tip:</strong> You can still use the <em>Email Schedule</em> feature to get a weekly summary sent to your inbox every Monday morning!</div>
+    `;
+    acts.innerHTML = `<button class="sb sb-ghost" onclick="closeSheet('notifOverlay')">Close</button>`;
+  } else {
+    const on = S.notifOn && Notification.permission==='granted';
+    const upcoming = getUpcomingNotifs();
+
+    body.innerHTML = `
+      <span class="notif-status-badge ${on?'on':'off'}">${on ? '✅ Reminders ON' : '🔕 Reminders OFF'}</span>
+      <p style="font-size:0.83rem;font-weight:700;color:var(--text-2);margin-bottom:12px;line-height:1.6">
+        ${on ? 'You\'ll get a notification 30 minutes before each activity. Works best when this page is open or saved to your home screen.' : 'Get a notification 30 minutes before each scheduled activity. Open this file in your mobile browser and add to home screen for the best experience.'}
+      </p>
+      ${on && upcoming.length ? `
+        <div style="font-size:0.78rem;font-weight:800;color:var(--text-2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Scheduled reminders (next 7 days)</div>
+        <div class="notif-schedule">
+          ${upcoming.map(n => {
+            const kid = S.kids.find(k => k.id===n.act.kidId);
+            return `<div class="notif-row">
+              ${kid ? `<span class="nr-dot" style="background:${kid.color}"></span>` : ''}
+              <span>${n.act.emoji||'📅'} ${n.act.name}</span>
+              <span class="nr-time">${n.label} ${fmtTime(n.act.time)}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      ` : ''}
+      <div class="info-box">📱 <strong>Phone tip:</strong> Open this file in mobile Chrome/Safari → tap <em>Share</em> → <em>"Add to Home Screen"</em> → then enable reminders here. You'll get vibration alerts on your phone!</div>
+      <div class="info-box" style="margin-top:8px">📧 <strong>Email reminders:</strong> Use the Email Schedule button to send yourself the week's activities. Set up a weekly reminder in your calendar to do this every Monday!</div>
+    `;
+
+    acts.innerHTML = `
+      <button class="sb sb-ghost" onclick="closeSheet('notifOverlay')">Close</button>
+      <button class="sb ${on ? 'sb-danger' : 'sb-primary'}" onclick="toggleNotifs()">${on ? '🔕 Turn Off' : '🔔 Enable Reminders'}</button>
+    `;
+  }
+
+  $('notifOverlay').style.display = 'flex';
+}
+
+function getUpcomingNotifs() {
+  const now = new Date();
+  const todayI = todayDi();
+  const result = [];
+  S.activities.forEach(act => {
+    const daysUntil = ((act.day - todayI) + 7) % 7 || 7;
+    if (daysUntil > 7) return;
+    const d = new Date();
+    d.setDate(d.getDate() + (daysUntil===7 ? 0 : daysUntil));
+    const [h,m] = act.time.split(':').map(Number);
+    d.setHours(h,m,0,0);
+    const notifAt = new Date(d - 30*60*1000);
+    if (notifAt > now) {
+      const label = daysUntil===0||daysUntil===7 ? 'Today' : daysUntil===1 ? 'Tomorrow' : DAYS[act.day].substring(0,3);
+      result.push({ act, notifAt, label });
+    }
+  });
+  return result.sort((a,b) => a.notifAt - b.notifAt);
+}
+
+async function toggleNotifs() {
+  if (S.notifOn) {
+    S.notifOn = false;
+    clearTimers();
+    saveS();
+    updateNotifPip();
+    closeSheet('notifOverlay');
+    toast('🔕 Reminders disabled');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    S.notifOn = true;
+    saveS();
+    scheduleNotifs();
+    updateNotifPip();
+    closeSheet('notifOverlay');
+    toast('🔔 Reminders enabled!');
+    setTimeout(() => {
+      new Notification('⭐ Kids Schedule', {
+        body: 'Reminders are active! You\'ll be notified 30 mins before each activity.',
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⭐</text></svg>'
+      });
+    }, 600);
+  } else {
+    toast('❌ Permission denied — check browser settings');
+  }
+}
+
+function clearTimers() { ntimers.forEach(clearTimeout); ntimers = []; }
+
+function scheduleNotifs() {
+  clearTimers();
+  if (!S.notifOn || Notification.permission !== 'granted') return;
+
+  const now = new Date();
+  const todayI = todayDi();
+
+  S.activities.forEach(act => {
+    const daysUntil = ((act.day - todayI) + 7) % 7;
+    const d = new Date();
+    d.setDate(d.getDate() + daysUntil);
+    const [h,m] = act.time.split(':').map(Number);
+    d.setHours(h,m,0,0);
+    const notifAt = new Date(d - 30*60*1000);
+    const ms = notifAt - now;
+
+    if (ms > 0 && ms < 7*24*3600*1000) {
+      const kid = S.kids.find(k => k.id===act.kidId);
+      const t = setTimeout(() => {
+        new Notification(`⏰ ${act.emoji||'📅'} ${act.name} in 30 minutes!`, {
+          body: `${kid?kid.name+"'s ":""}${act.name} at ${fmtTime(act.time)}${act.location?'\n📍 '+act.location:''}${act.notes?'\n📝 '+act.notes:''}`,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⭐</text></svg>',
+          tag: `ksp-${act.id}`,
+          requireInteraction: true,
+          vibrate: [200, 100, 200]
+        });
+      }, ms);
+      ntimers.push(t);
+    }
+  });
+}
+
+function updateNotifPip() {
+  const pip = $('notifPip');
+  pip.className = 'pip' + (S.notifOn && Notification.permission==='granted' ? ' on' : '');
+}
+
+// ═══════════════════════════════════════
+// ICAL EXPORT
+// ═══════════════════════════════════════
+function exportIcal() {
+  const dates = getWeekDates(S.weekOffset);
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Kids Schedule Pro//EN\r\nCALSCALE:GREGORIAN\r\nX-WR-CALNAME:Kids Schedule\r\n';
+
+  S.activities.forEach(act => {
+    const kid = S.kids.find(k => k.id===act.kidId);
+    const startD = new Date(dates[act.day]);
+    const [h,m] = act.time.split(':').map(Number);
+    startD.setHours(h,m,0,0);
+    const endD = new Date(startD.getTime() + (act.dur||60)*60*1000);
+    const uid = `ksp-${act.id}-${Date.now()}@kidsschedule`;
+    const summary = `${act.emoji?act.emoji+' ':''}${act.name}${kid?' ('+kid.name+')':''}`;
+    const rrule = act.repeat==='weekly' ? '\r\nRRULE:FREQ=WEEKLY' : act.repeat==='biweekly' ? '\r\nRRULE:FREQ=WEEKLY;INTERVAL=2' : '';
+    const desc = [act.notes, act.location?'📍 '+act.location:''].filter(Boolean).join(' | ');
+
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:${uid}\r\n`;
+    ics += `SUMMARY:${summary}\r\n`;
+    ics += `DTSTART:${icsDate(startD)}\r\n`;
+    ics += `DTEND:${icsDate(endD)}\r\n`;
+    if (act.location) ics += `LOCATION:${act.location}\r\n`;
+    if (desc) ics += `DESCRIPTION:${desc}\r\n`;
+    if (rrule) ics += rrule + '\r\n';
+    ics += 'BEGIN:VALARM\r\nTRIGGER:-PT30M\r\nACTION:DISPLAY\r\n';
+    ics += `DESCRIPTION:${act.name} starts in 30 minutes!\r\n`;
+    ics += 'END:VALARM\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+
+  ics += 'END:VCALENDAR';
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'kids-schedule.ics'; a.click();
+  URL.revokeObjectURL(url);
+  closeSheet('shareOverlay');
+  toast('📅 Calendar file downloaded!');
+}
+
+// ═══════════════════════════════════════
+// EMAIL SCHEDULE
+// ═══════════════════════════════════════
+function emailSchedule() {
+  const dates = getWeekDates(S.weekOffset);
+  const wk = weekLabel(S.weekOffset);
+  let body = `KIDS SCHEDULE: ${wk.toUpperCase()}\n${'═'.repeat(44)}\n\n`;
+
+  let hasAny = false;
+  DAYS.forEach((day, di) => {
+    const acts = S.activities.filter(a => a.day===di).sort((a,b) => a.time.localeCompare(b.time));
+    if (!acts.length) return;
+    hasAny = true;
+    const ds = dates[di].toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+    body += `${ds}\n${'─'.repeat(34)}\n`;
+    acts.forEach(act => {
+      const kid = S.kids.find(k => k.id===act.kidId);
+      body += `  ${act.emoji||'•'} ${act.name}`;
+      if (kid) body += ` — ${kid.name}`;
+      body += `\n    🕐 ${fmtTime(act.time)}`;
+      if (act.dur) body += ` (${act.dur<60?act.dur+'min':act.dur/60+'hr'})`;
+      if (act.location) body += `  📍 ${act.location}`;
+      if (act.notes) body += `\n    📝 ${act.notes}`;
+      body += '\n';
+    });
+    body += '\n';
+  });
+
+  if (!hasAny) body += '  No activities scheduled this week.\n\n';
+
+  body += `${'─'.repeat(34)}\n`;
+  body += `⭐ Reminder: You'll receive a push notification 30 minutes before each activity\n`;
+  body += `   if reminders are enabled in Kids Schedule Pro.\n\n`;
+  body += `📱 Open Kids Schedule on your phone to view the full timetable.\n`;
+
+  const sub = `Kids Schedule: ${wk}`;
+  window.location.href = `mailto:?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
+  closeSheet('shareOverlay');
+  toast('📧 Opening email app...');
+}
+
+// ═══════════════════════════════════════
+// PDF / PRINT
+// ═══════════════════════════════════════
+function exportPDF() {
+  closeSheet('shareOverlay');
+  toast('🖨️ Opening print dialog...');
+  setTimeout(() => window.print(), 300);
+}
+
+// ═══════════════════════════════════════
+// NATIVE SHARE / COPY LINK
+// ═══════════════════════════════════════
+function nativeShare() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: 'Kids Schedule', text: 'Our weekly activity schedule ⭐', url })
+      .then(() => toast('✅ Shared!'))
+      .catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => { toast('🔗 Link copied!'); closeSheet('shareOverlay'); });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('🔗 Link copied!');
+    closeSheet('shareOverlay');
+  }
+}
+
+function openShareSheet() { $('shareOverlay').style.display = 'flex'; }
+
+// ═══════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['addOverlay','kidsOverlay','shareOverlay','notifOverlay'].forEach(id => {
+      if ($(id).style.display !== 'none') closeSheet(id);
+    });
+  }
+});
+$('aName').addEventListener('keydown', e => { if (e.key==='Enter') saveActivity(); });
+$('newKidName').addEventListener('keydown', e => { if (e.key==='Enter') addKid(); });
+
+// fix overlay click for add (needs event param correctly)
+$('addOverlay').addEventListener('click', e => { if (e.target === $('addOverlay')) closeSheet('addOverlay'); });
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+if (S.notifOn && Notification.permission === 'granted') scheduleNotifs();
+renderAll();
+
+// Register Service Worker for offline + PWA install
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('SW registered'))
+    .catch(e => console.log('SW error:', e));
+}
+</script>
+</body>
+</html>
